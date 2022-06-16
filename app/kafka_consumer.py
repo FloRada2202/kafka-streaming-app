@@ -18,6 +18,6 @@ class KafkaConsumerClient:
                 self.kafka_service_input_topic,
                 bootstrap_servers=f"{self.kafka_service_internal_host}:{self.kafka_service_internal_port}",
                 value_deserializer=msgpack.loads,
-                enable_autocommit=False
+                enable_auto_commit=False
             )
 

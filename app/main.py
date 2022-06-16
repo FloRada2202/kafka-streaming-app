@@ -26,4 +26,5 @@ if __name__ == '__main__':
                     kafka_producer.send(KafkaConfig().kafka_service_output_topic, value=msgpack.packb(unpacked_msg))
                     kafka_consumer.commit()
                     unique_customer_ids.clear()
-
+    except Exception as e:
+        logging.info(str(e))
