@@ -10,9 +10,9 @@
 
 
 ### Since this is demo application, environment variables will be included here:
-'''
+```
 KAFKA_SERVICE_INTERNAL_HOST='kafka-service'  kafka host
 KAFKA_SERVICE_INTERNAL_PORT='9092'  kafka port
-KAFKA_SERVICE_INPUT_TOPIC='kafka-produce-users-topic'  topic to subscribe
-KAFKA_SERVICE_INPUT_TOPIC='kafka-produce-users-output-topic'  topic to produce results
-'''
+KAFKA_SERVICE_INPUT_TOPIC='kafka-produce-users-topic'
+KAFKA_SERVICE_INPUT_TOPIC='kafka-produce-users-output-topic'
+```
