@@ -32,3 +32,7 @@ class KafkaConfig(object):
     @property
     def kafka_service_password(self):
         return os.getenv('KAFKA_SERVICE_PASSWORD')
+    
+    @property
+    def kafka_auto_offset_reset(self):
+        return os.getenv('KAFKA_AUTO_OFFSET_RESET')
