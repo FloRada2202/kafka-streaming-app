@@ -21,7 +21,7 @@ if __name__ == '__main__':
             message = kafka_consumer.poll(1.0)
     
             if message is None: continue
-            if msg.error(): raise KafkaException(msg.error())
+            if message.error(): raise KafkaException(message.error())
             else:
                 event = ujson.loads(ujson.loads(message.value()))
                 event = KafkaStreamEvent(uid=event.get('uid'), timestamp=event.get('ts'))
