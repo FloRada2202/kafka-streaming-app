@@ -3,9 +3,24 @@ FROM python:3
 WORKDIR /
 
 COPY service-requirements.txt ./
+
+RUN git clone https://github.com/edenhill/librdkafka.git
+
+WORKDIR /librdkafka
+RUN /librdkafka/configure --prefix /usr &&\
+    make &&\ 
+    make install
+
+WORKDIR /
 RUN pip install --no-cache-dir -r service-requirements.txt
+
+
 ENV KAFKA_SERVICE_INTERNAL_HOST ${KAFKA_SERVICE_INTERNAL_HOST}
 ENV KAFKA_SERVICE_INTERNAL_PORT ${KAFKA_SERVICE_INTERNAL_PORT}
 ENV KAFKA_SERVICE_INPUT_TOPIC ${KAFKA_SERVICE_INPUT_TOPIC}
 ENV KAFKA_SERVICE_OUTPUT_TOPIC ${KAFKA_SERVICE_OUTPUT_TOPIC}
+ENV KAFKA_SERVICE_GROUP_ID ${KAFKA_SERVICE_GROUP_ID}
+ENV KAFKA_SERVICE_PASSWORD ${KAFKA_SERVICE_PASSWORD}
+ENV KAFKA_SERVICE_USERNAME ${KAFKA_SERVICE_USERNAME}
+
 ADD app /app
