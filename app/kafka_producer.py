@@ -2,7 +2,6 @@ import logging
 
 from confluent_kafka import Producer
 
-
 from kafka_configuration import KafkaConfig
 
 class KafkaProducerClient:
@@ -22,6 +21,7 @@ class KafkaProducerClient:
             'sasl.username': self.kafka_service_username,
             'sasl.password': self.kafka_service_password
         }
+
         return Producer(
                 producer_configuration
             )

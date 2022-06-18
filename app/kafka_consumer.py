@@ -6,6 +6,7 @@ from kafka_configuration import KafkaConfig
 
 logging.basicConfig(level=logging.INFO)
 
+
 class KafkaConsumerClient:
     def __init__(self):
         self.kafka_service_internal_host = KafkaConfig().kafka_service_host
@@ -16,22 +17,25 @@ class KafkaConsumerClient:
         self.kafka_service_password = KafkaConfig().kafka_service_password
 
     def get_consumer(self):
-        consumer_configuration = {
-            'bootstrap.servers': self.kafka_service_internal_host,
-            'group.id': self.kafka_service_group_id,
-            'auto.offset.reset': 'earliest',
-            'enable.auto.commit': 'true',
-            'max.poll.interval.ms': '86400000',
-            'security.protocol': 'SASL_SSL',
-            'sasl.mechanisms': 'PLAIN',
-            'sasl.username': self.kafka_service_username,
-            'sasl.password': self.kafka_service_password
-        }
+        try:
+            consumer_configuration = {
+                'bootstrap.servers': self.kafka_service_internal_host,
+                'group.id': self.kafka_service_group_id,
+                'auto.offset.reset': 'earliest',
+                'enable.auto.commit': 'true',
+                'max.poll.interval.ms': '86400000',
+                'security.protocol': 'SASL_SSL',
+                'sasl.mechanisms': 'PLAIN',
+                'sasl.username': self.kafka_service_username,
+                'sasl.password': self.kafka_service_password
+            }
 
-        consumer = Consumer(
-                consumer_configuration
-            )
-        consumer.subscribe([self.kafka_service_input_topic])
+            consumer = Consumer(
+                    consumer_configuration
+                )
+            consumer.subscribe([self.kafka_service_input_topic])
 
-        return consumer
+            return consumer
+        except KafkaException as e:
+            raise KafkaException(str(e))
 
