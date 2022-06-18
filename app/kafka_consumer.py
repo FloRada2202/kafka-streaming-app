@@ -1,7 +1,8 @@
 import os
 import logging
 
-from confluent_kafka import Consumer
+from confluent_kafka import Consumer, KafkaException
+
 from kafka_configuration import KafkaConfig
 
 logging.basicConfig(level=logging.INFO)

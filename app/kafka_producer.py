@@ -1,6 +1,6 @@
 import logging
 
-from confluent_kafka import Producer
+from confluent_kafka import Producer, KafkaException
 
 from kafka_configuration import KafkaConfig
 
@@ -14,14 +14,17 @@ class KafkaProducerClient:
         self.kafka_service_password = KafkaConfig().kafka_service_password
 
     def get_producer(self):
-        producer_configuration = {
-            'bootstrap.servers': self.kafka_service_internal_host,
-            'security.protocol': 'SASL_SSL',
-            'sasl.mechanisms': 'PLAIN',
-            'sasl.username': self.kafka_service_username,
-            'sasl.password': self.kafka_service_password
-        }
+        try:
+            producer_configuration = {
+                'bootstrap.servers': self.kafka_service_internal_host,
+                'security.protocol': 'SASL_SSL',
+                'sasl.mechanisms': 'PLAIN',
+                'sasl.username': self.kafka_service_username,
+                'sasl.password': self.kafka_service_password
+            }
 
-        return Producer(
-                producer_configuration
-            )
+            return Producer(
+                    producer_configuration
+                )
+        except KafkaException as e:
+            raise KafkaException(str(e))
