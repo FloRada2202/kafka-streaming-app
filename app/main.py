@@ -1,30 +1,34 @@
-import time
 import logging
-import os
-import msgpack
-import time
+import ujson
+
+from confluent_kafka import KafkaException
 
 from kafka_configuration import KafkaConfig
 from kafka_consumer import KafkaConsumerClient
 from kafka_producer import KafkaProducerClient
+from kafka_stream_event import KafkaStreamEvent
+from kafka_events_processor import KafkaEventsProcessor
 
 logging.basicConfig(level=logging.INFO)
 
 if __name__ == '__main__':
+    kafka_consumer = KafkaConsumerClient().get_consumer()
+    kafka_producer = KafkaProducerClient().get_producer()
+    kafka_events_processor = KafkaEventsProcessor()
+
     try:
-        kafka_consumer = KafkaConsumerClient().get_consumer()
-        kafka_producer = KafkaProducerClient().get_producer()
-        unique_customer_ids = set()
         while True:
-            first_message_timestamp_arrival = time.time()
-            for msg in kafka_consumer:
-                unpacked_msg = msgpack.loads(msg.value)
-                unique_customer_ids.add(unpacked_msg.get('uid'))
-                if (unpacked_msg.get('ts') - first_message_timestamp_arrival) > 59:
-                    first_message_timestamp_arrival = unpacked_msg.get('ts')
-                    unique_users_ids_message = f"Unique users count per minute: {len(unique_customer_ids)}"
-                    kafka_producer.send(KafkaConfig().kafka_service_output_topic, value=msgpack.packb(unpacked_msg))
-                    kafka_consumer.commit()
-                    unique_customer_ids.clear()
-    except Exception as e:
-        logging.info(str(e))
+            message = kafka_consumer.poll(1.0)
+    
+            if message is None: continue
+            if msg.error(): raise KafkaException(msg.error())
+            else:
+                event = ujson.loads(ujson.loads(message.value()))
+                event = KafkaStreamEvent(uid=event.get('uid'), timestamp=event.get('ts'))
+                kafka_events_processor.add_event(event)
+
+    except KeyboardInterrupt as e:
+        logging.info('Process interupted by user.')
+    
+    finally:
+        kafka_consumer.close()
