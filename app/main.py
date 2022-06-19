@@ -14,9 +14,10 @@ logging.basicConfig(level=logging.INFO)
 if __name__ == '__main__':
     kafka_consumer = KafkaConsumerClient().get_consumer()
     kafka_producer = KafkaProducerClient().get_producer()
-    kafka_events_processor = KafkaEventsProcessor()
+    kafka_events_processor = KafkaEventsProcessor(kafka_producer)
 
     try:
+        logging.info('starting loop in order to receive events')
         while True:
             message = kafka_consumer.poll(1.0)
     
@@ -24,8 +25,8 @@ if __name__ == '__main__':
             if message.error(): raise KafkaException(message.error())
             else:
                 event = ujson.loads(ujson.loads(message.value()))
-                event = KafkaStreamEvent(uid=event.get('uid'), timestamp=event.get('ts'))
-                kafka_events_processor.add_event(event)
+                event_object = KafkaStreamEvent(uid=event.get('uid'), timestamp=event.get('ts'))
+                kafka_events_processor.add_event(event_object)
 
     except KeyboardInterrupt as e:
         logging.info('Process interupted by user.')
