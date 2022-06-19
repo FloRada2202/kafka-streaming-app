@@ -3,6 +3,7 @@ import ujson
 
 from datetime import datetime
 from kafka_configuration import KafkaConfig
+
 logging.basicConfig(level=logging.INFO)
 
 class KafkaEventsProcessor:
